@@ -17,14 +17,14 @@ const onConnected = () => {
 let hotCurrentHash // lastHash 上一次 hash值 
 let currentHash // 这一次的hash值
 socket.on('hash', (hash) => {
-  debugger
+  // debugger
   currentHash = hash
 })
 socket.on('ok', () => {
   reloadApp(true)
 })
 hotEmitter.on('webpackHotUpdate', () => {
-  debugger
+  // debugger
   if (!hotCurrentHash || hotCurrentHash == currentHash) {
     return hotCurrentHash = currentHash
   }
@@ -34,9 +34,14 @@ hotEmitter.on('webpackHotUpdate', () => {
 function hotCheck() {
   hotDownloadManifest().then(update => {
     let chunkIds = Object.keys(update.c)
-    chunkIds.forEach(chunkId => {
-      hotDownloadUpdateChunk(chunkId)
-    })
+    if (chunkIds.length > 0) {
+      chunkIds.forEach(chunkId => {
+        hotDownloadUpdateChunk(chunkId)
+      })
+    } else
+    {
+      hotCurrentHash = update.h
+    }
   })
 }
 
@@ -110,7 +115,7 @@ window.webpackHotUpdate = function (chunkId, moreModules) {
     moreModules[moduleId].call(module.exports, module, module.exports, __webpack_require__)
     module.l = true // 状态变为加载就是给module.exports 赋值了
     parents.forEach(parent => {
-      debugger // parents=['./src/index.js']
+      // debugger // parents=['./src/index.js']
       let parentModule = __webpack_require__.c[parent]
       // _acceptedDependencies={'./src/title.js',render}
       parentModule && parentModule.hot && parentModule.hot._acceptedDependencies[moduleId] && parentModule.hot._acceptedDependencies[moduleId]()
